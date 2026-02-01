@@ -1,0 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  @apply bg-fog text-ink;
+}
+
+.bg-grid {
+  background-image: linear-gradient(transparent 95%, rgba(0, 0, 0, 0.06) 96%),
+    linear-gradient(90deg, transparent 95%, rgba(0, 0, 0, 0.06) 96%);
+  background-size: 32px 32px;
+}
