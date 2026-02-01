@@ -12,9 +12,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="min-h-screen">
         <div className="bg-grid min-h-screen">
           <header className="border-b border-black/10 bg-white/80 backdrop-blur">
-            <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+            <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-4 md:flex-row md:items-center md:justify-between md:px-6">
               <div className="text-lg font-semibold tracking-tight">NetworkAI</div>
-              <nav className="flex gap-4 text-sm font-medium">
+              <nav className="flex flex-wrap gap-3 text-sm font-medium">
                 <a className="hover:text-accent" href="/">
                   Dashboard
                 </a>
@@ -30,7 +30,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               </nav>
             </div>
           </header>
-          <main className="mx-auto max-w-6xl px-6 py-8">{children}</main>
+          <main className="mx-auto max-w-6xl px-4 py-6 md:px-6 md:py-8">{children}</main>
         </div>
       </body>
     </html>

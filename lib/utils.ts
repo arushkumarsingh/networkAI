@@ -7,3 +7,6 @@ export const formatDate = (value?: string) => {
     year: "numeric"
   });
 };
+
+export const cn = (...classes: Array<string | false | null | undefined>) =>
+  classes.filter(Boolean).join(" ");

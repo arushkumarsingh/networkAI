@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { transcribeAudio } from "@/agents/transcribe";
 
 interface VoiceRecorderProps {
   onTranscription: (text: string) => void;
@@ -25,7 +26,7 @@ export function VoiceRecorder({ onTranscription }: VoiceRecorderProps) {
 
     mediaRecorder.onstop = async () => {
       const audioBlob = new Blob(chunksRef.current, { type: "audio/webm" });
-      await transcribeAudio(audioBlob);
+      await handleTranscription(audioBlob);
       stream.getTracks().forEach((track) => track.stop());
     };
 
@@ -38,18 +39,10 @@ export function VoiceRecorder({ onTranscription }: VoiceRecorderProps) {
     setIsRecording(false);
   };
 
-  const transcribeAudio = async (audioBlob: Blob) => {
+  const handleTranscription = async (audioBlob: Blob) => {
     setIsProcessing(true);
     try {
-      const formData = new FormData();
-      formData.append("audio", audioBlob);
-
-      const response = await fetch("/api/transcribe", {
-        method: "POST",
-        body: formData
-      });
-
-      const { text } = (await response.json()) as { text: string };
+      const text = await transcribeAudio(audioBlob);
       onTranscription(text);
     } catch (error) {
       console.error("Transcription error:", error);

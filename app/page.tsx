@@ -14,13 +14,13 @@ export default function HomePage() {
 
   return (
     <div className="space-y-10">
-      <section className="rounded-3xl border border-black/10 bg-white/90 p-8 shadow-sm">
+      <section className="rounded-3xl border border-black/10 bg-white/90 p-6 shadow-sm md:p-8">
         <div className="grid gap-6 md:grid-cols-[1.2fr_0.8fr]">
           <div>
             <p className="text-sm font-semibold uppercase tracking-[0.2em] text-black/50">
               Multimodal intelligence
             </p>
-            <h1 className="mt-3 text-4xl font-semibold tracking-tight md:text-5xl">
+            <h1 className="mt-3 text-3xl font-semibold tracking-tight md:text-5xl">
               Remember every face, follow up every time.
             </h1>
             <p className="mt-4 max-w-xl text-base text-black/70">

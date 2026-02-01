@@ -39,9 +39,9 @@ export default function ContactDetailPage() {
 
   return (
     <div className="space-y-6">
-      <div className="rounded-3xl border border-black/10 bg-white/80 p-6">
+      <div className="rounded-3xl border border-black/10 bg-white/80 p-5 md:p-6">
         <div className="flex flex-col gap-6 md:flex-row">
-          <div className="h-48 w-48 overflow-hidden rounded-2xl border border-black/10 bg-black/5">
+          <div className="h-48 w-full max-w-xs overflow-hidden rounded-2xl border border-black/10 bg-black/5 md:w-48">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={contact.imageUrl}

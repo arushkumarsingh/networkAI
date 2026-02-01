@@ -50,10 +50,10 @@ export default function CapturePage() {
   };
 
   return (
-    <div className="container mx-auto space-y-6 p-4">
-      <h1 className="text-3xl font-bold">Capture Contact</h1>
+    <div className="container mx-auto space-y-6 px-0">
+      <h1 className="text-2xl font-bold md:text-3xl">Capture Contact</h1>
 
-      <div className="flex gap-4">
+      <div className="flex flex-wrap gap-3">
         <Button
           onClick={() => setCaptureType("selfie")}
           variant={captureType === "selfie" ? "default" : "outline"}
@@ -75,7 +75,7 @@ export default function CapturePage() {
             screenshotFormat="image/jpeg"
             className="w-full max-w-lg rounded-lg"
           />
-          <div className="flex gap-4">
+          <div className="flex flex-wrap gap-3">
             <Button onClick={capture} size="lg">
               Capture Photo
             </Button>
