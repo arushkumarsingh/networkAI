@@ -5,7 +5,15 @@ import { Button } from "@/components/ui/button";
 import { transcribeAudio } from "@/agents/transcribe";
 
 interface VoiceRecorderProps {
-  onTranscription: (text: string) => void;
+  onTranscription: (
+    text: string,
+    parsed?: {
+      name: string | null;
+      organization: string | null;
+      position: string | null;
+      connectionSummary: string | null;
+    } | null
+  ) => void;
 }
 
 export function VoiceRecorder({ onTranscription }: VoiceRecorderProps) {
@@ -43,7 +51,40 @@ export function VoiceRecorder({ onTranscription }: VoiceRecorderProps) {
     setIsProcessing(true);
     try {
       const text = await transcribeAudio(audioBlob);
-      onTranscription(text);
+      if (!text.trim()) {
+        onTranscription(text, null);
+        return;
+      }
+
+      let parsed: {
+        name: string | null;
+        organization: string | null;
+        position: string | null;
+        connectionSummary: string | null;
+      } | null = null;
+
+      try {
+        const response = await fetch("/api/parse-contact", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text })
+        });
+        if (response.ok) {
+          const data = (await response.json()) as {
+            data?: {
+              name: string | null;
+              organization: string | null;
+              position: string | null;
+              connectionSummary: string | null;
+            };
+          };
+          parsed = data.data ?? null;
+        }
+      } catch (error) {
+        console.error("Parse contact error:", error);
+      }
+
+      onTranscription(text, parsed);
     } catch (error) {
       console.error("Transcription error:", error);
     } finally {

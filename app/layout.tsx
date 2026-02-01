@@ -23,7 +23,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <div className="bg-grid min-h-screen">
             <header className="border-b border-black/10 bg-white/80 backdrop-blur">
               <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-4 md:flex-row md:items-center md:justify-between md:px-6">
-                <div className="text-lg font-semibold tracking-tight">NetworkAI</div>
+                <a
+                  href="/"
+                  className="text-lg font-semibold tracking-tight hover:text-accent"
+                >
+                  NetworkAI
+                </a>
                 <nav className="flex flex-wrap items-center gap-3 text-sm font-medium">
                   <a className="hover:text-accent" href="/">
                     Dashboard

@@ -10,6 +10,28 @@ import { VoiceRecorder } from "@/components/VoiceRecorder";
 import { addContact } from "@/lib/storage";
 import type { Contact } from "@/lib/types";
 
+const buildTwoLineContext = (primary?: string, fallback?: string) => {
+  const raw = (primary ?? fallback ?? "").trim();
+  if (!raw) return "";
+
+  const lines = raw
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+  if (lines.length >= 2) return `${lines[0]}\n${lines[1]}`;
+
+  const sentences = raw
+    .split(/(?<=[.!?])\s+/)
+    .map((sentence) => sentence.trim())
+    .filter(Boolean);
+  if (sentences.length >= 2) return `${sentences[0]}\n${sentences[1]}`;
+  if (sentences.length === 1) {
+    return `${sentences[0]}\nFollow up while the conversation is fresh.`;
+  }
+
+  return raw;
+};
+
 export default function CapturePage() {
   const [imageSrc, setImageSrc] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
@@ -17,6 +39,12 @@ export default function CapturePage() {
   const [preferredDeviceId, setPreferredDeviceId] = useState<string | null>(null);
   const webcamRef = useRef<Webcam>(null);
   const [context, setContext] = useState("");
+  const [parsedContext, setParsedContext] = useState<{
+    name: string | null;
+    organization: string | null;
+    position: string | null;
+    connectionSummary: string | null;
+  } | null>(null);
 
   useEffect(() => {
     const pickBestCamera = async () => {
@@ -90,14 +118,22 @@ export default function CapturePage() {
         const selfieContact: Contact = {
           id: crypto.randomUUID(),
           type: "selfie",
-          name: selfieAnalysis.name ?? "New contact",
-          title: selfieAnalysis.professionalContext ?? "",
-          company: "",
+          name:
+            parsedContext?.name ??
+            selfieAnalysis.parsedName ??
+            selfieAnalysis.name ??
+            "New contact",
+          title: parsedContext?.position ?? selfieAnalysis.professionalContext ?? "",
+          company: parsedContext?.organization ?? selfieAnalysis.organization ?? "",
           email: "",
           phone: "",
           imageUrl: imageSrc,
           imageType: "selfie",
-          context: selfieAnalysis.description ?? context,
+          context: buildTwoLineContext(
+            (parsedContext?.connectionSummary as string | undefined) ??
+              (selfieAnalysis.connectionSummary as string | undefined),
+            selfieAnalysis.description ?? context
+          ),
           tags: selfieAnalysis.suggestedTags ?? [],
           notes: selfieAnalysis.description ?? "",
           relationship: "",
@@ -109,14 +145,26 @@ export default function CapturePage() {
         const cardContact: Contact = {
           id: crypto.randomUUID(),
           type: "business-card",
-          name: cardAnalysis.name ?? "Business card contact",
-          title: cardAnalysis.title ?? "",
-          company: cardAnalysis.company ?? "",
+          name:
+            parsedContext?.name ??
+            cardAnalysis.parsedName ??
+            cardAnalysis.name ??
+            "Business card contact",
+          title: parsedContext?.position ?? cardAnalysis.title ?? "",
+          company:
+            parsedContext?.organization ??
+            cardAnalysis.organization ??
+            cardAnalysis.company ??
+            "",
           email: cardAnalysis.email ?? "",
           phone: cardAnalysis.phone ?? "",
           imageUrl: imageSrc,
           imageType: "card",
-          context,
+          context: buildTwoLineContext(
+            (parsedContext?.connectionSummary as string | undefined) ??
+              (cardAnalysis.connectionSummary as string | undefined),
+            context
+          ),
           tags: [],
           notes: cardAnalysis.rawText ?? "",
           relationship: "",
@@ -137,14 +185,26 @@ export default function CapturePage() {
         const cardContact: Contact = {
           id: crypto.randomUUID(),
           type: "business-card",
-          name: cardAnalysis.name ?? "Business card contact",
-          title: cardAnalysis.title ?? "",
-          company: cardAnalysis.company ?? "",
+          name:
+            parsedContext?.name ??
+            cardAnalysis.parsedName ??
+            cardAnalysis.name ??
+            "Business card contact",
+          title: parsedContext?.position ?? cardAnalysis.title ?? "",
+          company:
+            parsedContext?.organization ??
+            cardAnalysis.organization ??
+            cardAnalysis.company ??
+            "",
           email: cardAnalysis.email ?? "",
           phone: cardAnalysis.phone ?? "",
           imageUrl: imageSrc,
           imageType: "card",
-          context,
+          context: buildTwoLineContext(
+            (parsedContext?.connectionSummary as string | undefined) ??
+              (cardAnalysis.connectionSummary as string | undefined),
+            context
+          ),
           tags: [],
           notes: cardAnalysis.rawText ?? "",
           relationship: "",
@@ -238,7 +298,12 @@ export default function CapturePage() {
         </div>
       )}
 
-      <VoiceRecorder onTranscription={(text) => setContext(text)} />
+      <VoiceRecorder
+        onTranscription={(text, parsed) => {
+          setContext(text);
+          setParsedContext(parsed ?? null);
+        }}
+      />
     </div>
   );
 }

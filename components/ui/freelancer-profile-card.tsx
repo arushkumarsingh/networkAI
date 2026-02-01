@@ -100,7 +100,7 @@ export const FreelancerProfileCard = React.forwardRef<
           </motion.div>
 
           <motion.div
-            className="my-4 rounded-lg border border-border bg-background/30 p-4 text-sm text-muted-foreground"
+            className="my-4 rounded-lg border border-border bg-background/30 p-4 text-sm text-muted-foreground whitespace-pre-line"
             variants={itemVariants}
           >
             {context}

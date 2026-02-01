@@ -45,6 +45,25 @@ Return as JSON with fields: description, professionalContext, suggestedTags.`;
       extractedData = { rawText: content };
     }
 
+    const trimmedContext = voiceContext?.trim();
+    if (trimmedContext) {
+      const contextPrompt = `You are preparing a concise networking note.\n\nVoice note:\n"${trimmedContext}"\n\nBusiness card details (if any):\nname: ${extractedData.name ?? "unknown"}\ntitle: ${extractedData.title ?? "unknown"}\ncompany: ${extractedData.company ?? "unknown"}\n\nReturn JSON with fields:\n- parsedName: best guess of the person's name (prefer explicit mention in the note; otherwise card name; null if unknown)\n- organization: company/org mentioned in the note; otherwise card company; null if unknown\n- connectionSummary: EXACTLY two short lines (no bullets), why I should contact this person and how we are connected. Use the organization if available.\n\nKeep each line under 90 characters.`;
+
+      const contextResponse = await openai.chat.completions.create({
+        model: "gpt-4o",
+        messages: [{ role: "user", content: contextPrompt }],
+        max_tokens: 200
+      });
+
+      const contextContent = contextResponse.choices[0]?.message?.content ?? "";
+      try {
+        const parsed = JSON.parse(contextContent || "{}") as Record<string, unknown>;
+        extractedData = { ...extractedData, ...parsed };
+      } catch {
+        // Leave extractedData as-is when context parsing fails.
+      }
+    }
+
     return NextResponse.json({ success: true, data: extractedData });
   } catch (error) {
     console.error("Image analysis error:", error);
