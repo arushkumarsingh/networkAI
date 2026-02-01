@@ -37,8 +37,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                     Search
                   </a>
                   <SignedOut>
-                    <SignInButton />
-                    <SignUpButton />
+                    <SignInButton>
+                      <button className="rounded-full bg-ink px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5">
+                        Sign in
+                      </button>
+                    </SignInButton>
                   </SignedOut>
                   <SignedIn>
                     <UserButton />

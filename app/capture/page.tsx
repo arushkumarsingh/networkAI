@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Webcam from "react-webcam";
 import { Button } from "@/components/ui/button";
 import { Image as ImageIcon, RefreshCcw } from "lucide-react";
@@ -14,9 +14,42 @@ export default function CapturePage() {
   const [imageSrc, setImageSrc] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [facingMode, setFacingMode] = useState<"user" | "environment">("user");
-  const [useExactFacing, setUseExactFacing] = useState(true);
+  const [preferredDeviceId, setPreferredDeviceId] = useState<string | null>(null);
   const webcamRef = useRef<Webcam>(null);
   const [context, setContext] = useState("");
+
+  useEffect(() => {
+    const pickBestCamera = async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        stream.getTracks().forEach((track) => track.stop());
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const videoDevices = devices.filter((device) => device.kind === "videoinput");
+        if (videoDevices.length === 0) return;
+
+        const scored = videoDevices.map((device) => {
+          const label = device.label.toLowerCase();
+          let score = 0;
+          if (label.includes("back") || label.includes("rear")) score += 5;
+          if (label.includes("wide")) score += 2;
+          if (label.includes("ultra") || label.includes("0.5")) score -= 5;
+          if (label.includes("front") || label.includes("user")) score -= 3;
+          return { deviceId: device.deviceId, score };
+        });
+
+        const best = scored.sort((a, b) => b.score - a.score)[0];
+        if (best?.deviceId) setPreferredDeviceId(best.deviceId);
+      } catch (error) {
+        console.warn("Camera selection failed:", error);
+      }
+    };
+
+    if (facingMode === "environment") {
+      pickBestCamera();
+    } else {
+      setPreferredDeviceId(null);
+    }
+  }, [facingMode]);
 
   const capture = () => {
     const nextImage = webcamRef.current?.getScreenshot();
@@ -139,7 +172,8 @@ export default function CapturePage() {
             screenshotFormat="image/jpeg"
             className="w-full max-w-lg rounded-lg"
             videoConstraints={{
-              facingMode: useExactFacing ? { exact: facingMode } : facingMode,
+              facingMode,
+              deviceId: preferredDeviceId ? { exact: preferredDeviceId } : undefined,
               width: { ideal: 1280 },
               height: { ideal: 720 }
             }}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { SignInButton, SignedIn, SignedOut } from "@clerk/nextjs";
 import type { Contact } from "@/lib/types";
 import { loadContacts } from "@/lib/storage";
 import ContactCard from "@/components/ContactCard";
@@ -21,19 +22,28 @@ export default function HomePage() {
               Multimodal intelligence
             </p>
             <h1 className="mt-3 text-3xl font-semibold tracking-tight md:text-5xl">
-              Remember every face, follow up every time.
+              Do you forget the names of people you meet at networking events?
             </h1>
             <p className="mt-4 max-w-xl text-base text-black/70">
               Capture a business card or selfie, add context, and let AI organize your
               networking momentum in minutes.
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
-              <a
-                href="/capture"
-                className="rounded-full bg-ink px-5 py-2 text-sm font-semibold text-white"
-              >
-                Start a capture
-              </a>
+              <SignedIn>
+                <a
+                  href="/capture"
+                  className="rounded-full bg-ink px-5 py-2 text-sm font-semibold text-white"
+                >
+                  Start a capture
+                </a>
+              </SignedIn>
+              <SignedOut>
+                <SignInButton>
+                  <button className="rounded-full bg-ink px-5 py-2 text-sm font-semibold text-white">
+                    Start a capture
+                  </button>
+                </SignInButton>
+              </SignedOut>
               <a
                 href="/search"
                 className="rounded-full border border-black/20 px-5 py-2 text-sm font-semibold"
