@@ -20,6 +20,11 @@ export const saveContacts = (contacts: Contact[]) => {
   window.localStorage.setItem(STORAGE_KEY, JSON.stringify(contacts));
 };
 
+export const clearContacts = () => {
+  if (!isBrowser()) return;
+  window.localStorage.removeItem(STORAGE_KEY);
+};
+
 export const addContact = (contact: Contact) => {
   const contacts = loadContacts();
   saveContacts([contact, ...contacts]);

@@ -8,6 +8,7 @@ import {
   SignedOut,
   UserButton
 } from "@clerk/nextjs";
+import ClearContactsOnSignOut from "@/components/ClearContactsOnSignOut";
 
 export const metadata: Metadata = {
   title: "NetworkAI",
@@ -52,6 +53,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <main className="mx-auto max-w-6xl px-4 py-6 md:px-6 md:py-8">
               {children}
             </main>
+            <ClearContactsOnSignOut />
           </div>
         </body>
       </html>
