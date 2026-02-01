@@ -9,7 +9,34 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: true, data: null });
     }
 
-    const response = await openai.chat.completions.create({
+    const responseFormat = {
+      type: "json_schema",
+      json_schema: {
+        name: "contact_context",
+        strict: true,
+        schema: {
+          type: "object",
+          additionalProperties: false,
+          properties: {
+            name: {
+              anyOf: [{ type: "string" }, { type: "null" }]
+            },
+            organization: {
+              anyOf: [{ type: "string" }, { type: "null" }]
+            },
+            position: {
+              anyOf: [{ type: "string" }, { type: "null" }]
+            },
+            connectionSummary: {
+              anyOf: [{ type: "string" }, { type: "null" }]
+            }
+          },
+          required: ["name", "organization", "position", "connectionSummary"]
+        }
+      }
+    } as const;
+
+    const response = await (openai.chat.completions as any).create({
       model: "gpt-4o-mini",
       messages: [
         {
@@ -27,32 +54,8 @@ export async function POST(request: NextRequest) {
             "Use null when unknown. Keep each line under 90 characters."
         }
       ],
-      response_format: {
-        type: "json_schema",
-        json_schema: {
-          name: "contact_context",
-          strict: true,
-          schema: {
-            type: "object",
-            additionalProperties: false,
-            properties: {
-              name: {
-                anyOf: [{ type: "string" }, { type: "null" }]
-              },
-              organization: {
-                anyOf: [{ type: "string" }, { type: "null" }]
-              },
-              position: {
-                anyOf: [{ type: "string" }, { type: "null" }]
-              },
-              connectionSummary: {
-                anyOf: [{ type: "string" }, { type: "null" }]
-              }
-            },
-            required: ["name", "organization", "position", "connectionSummary"]
-          }
-        }
-      },
+      // OpenAI SDK types in this project don't yet include json_schema response_format.
+      response_format: responseFormat,
       max_tokens: 200
     });
 
