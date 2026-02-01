@@ -14,6 +14,7 @@ export default function CapturePage() {
   const [imageSrc, setImageSrc] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [facingMode, setFacingMode] = useState<"user" | "environment">("user");
+  const [useExactFacing, setUseExactFacing] = useState(true);
   const webcamRef = useRef<Webcam>(null);
   const [context, setContext] = useState("");
 
@@ -137,7 +138,11 @@ export default function CapturePage() {
             ref={webcamRef}
             screenshotFormat="image/jpeg"
             className="w-full max-w-lg rounded-lg"
-            videoConstraints={{ facingMode }}
+            videoConstraints={{
+              facingMode: useExactFacing ? { exact: facingMode } : facingMode,
+              width: { ideal: 1280 },
+              height: { ideal: 720 }
+            }}
           />
           <div className="mt-3 flex items-center justify-between gap-6 rounded-2xl border border-black/10 bg-white/80 px-4 py-3">
             <Button
