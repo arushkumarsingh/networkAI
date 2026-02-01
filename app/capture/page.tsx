@@ -234,8 +234,9 @@ export default function CapturePage() {
             videoConstraints={{
               facingMode,
               deviceId: preferredDeviceId ? { exact: preferredDeviceId } : undefined,
-              width: { ideal: 1280 },
-              height: { ideal: 720 }
+              width: { ideal: 1200 },
+              height: { ideal: 1600 },
+              aspectRatio: 3 / 4
             }}
           />
           <div className="mt-3 flex items-center justify-between gap-6 rounded-2xl border border-black/10 bg-white/80 px-4 py-3">
