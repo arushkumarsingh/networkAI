@@ -1,16 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { LayoutTemplate, Palette } from "lucide-react";
 import { FreelancerProfileCard } from "@/components/ui/freelancer-profile-card";
 import { loadContacts } from "@/lib/storage";
 import type { Contact } from "@/lib/types";
-
-const ToolIcon = ({ icon: Icon }: { icon: React.ElementType }) => (
-  <div className="flex h-7 w-7 items-center justify-center rounded-md bg-muted text-muted-foreground">
-    <Icon className="h-4 w-4" />
-  </div>
-);
 
 export default function ContactsPage() {
   const [contacts, setContacts] = useState<Contact[]>([]);
@@ -42,22 +35,13 @@ export default function ContactsPage() {
       ) : (
         <div className="grid gap-6 md:grid-cols-2">
           {contacts.map((contact) => {
-            const tools = [
-              <ToolIcon key="tool-1" icon={LayoutTemplate} />,
-              <ToolIcon key="tool-2" icon={Palette} />
-            ];
-
             return (
               <FreelancerProfileCard
                 key={contact.id}
                 name={contact.name ?? "New contact"}
                 title={[contact.title, contact.company].filter(Boolean).join(" · ") || "—"}
-                avatarSrc={contact.imageUrl}
-                bannerSrc="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=60"
-                rating={4.2}
-                duration={contact.followUpDate ? "Follow-up set" : "No follow-up"}
-                rate={contact.priority}
-                tools={tools}
+                bannerSrc={contact.imageUrl || "/placeholder-user.svg"}
+                context={contact.context || "No notes yet. Add a quick voice note to remember this person."}
                 onGetInTouch={() => window.location.assign(`/contacts/${contact.id}`)}
                 onBookmark={() => console.log("Bookmark clicked!", contact.id)}
                 className="mx-auto w-full max-w-sm"

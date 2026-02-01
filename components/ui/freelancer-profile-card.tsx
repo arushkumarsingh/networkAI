@@ -1,20 +1,15 @@
 import * as React from "react";
-import { motion } from "framer-motion";
-import { Star, Bookmark } from "lucide-react";
+import { motion, type HTMLMotionProps } from "framer-motion";
+import { Bookmark } from "lucide-react";
 
 import { cn } from "@/lib/utils";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 
-interface FreelancerProfileCardProps extends React.HTMLAttributes<HTMLDivElement> {
+interface FreelancerProfileCardProps extends HTMLMotionProps<"div"> {
   name: string;
   title: string;
-  avatarSrc: string;
   bannerSrc: string;
-  rating: number;
-  duration: string;
-  rate: string;
-  tools: React.ReactNode;
+  context: string;
   onGetInTouch?: () => void;
   onBookmark?: () => void;
   className?: string;
@@ -57,23 +52,14 @@ export const FreelancerProfileCard = React.forwardRef<
       className,
       name,
       title,
-      avatarSrc,
       bannerSrc,
-      rating,
-      duration,
-      rate,
-      tools,
+      context,
       onGetInTouch,
       onBookmark,
       ...props
     },
     ref
   ) => {
-    const avatarName = name
-      .split(" ")
-      .map((n) => n[0])
-      .join("");
-
     return (
       <motion.div
         ref={ref}
@@ -87,7 +73,7 @@ export const FreelancerProfileCard = React.forwardRef<
         whileHover="hover"
         {...props}
       >
-        <div className="h-32 w-full">
+        <div className="h-40 w-full">
           <img
             src={bannerSrc}
             alt={`${name}'s banner`}
@@ -105,34 +91,19 @@ export const FreelancerProfileCard = React.forwardRef<
           <Bookmark className="h-4 w-4" />
         </Button>
 
-        <div className="absolute left-1/2 top-32 -translate-x-1/2 -translate-y-1/2">
-          <Avatar className="h-20 w-20 border-4 border-card">
-            <AvatarImage src={avatarSrc} alt={name} />
-            <AvatarFallback>{avatarName}</AvatarFallback>
-          </Avatar>
-        </div>
-
-        <motion.div className="px-6 pb-6 pt-12" variants={contentVariants}>
-          <motion.div className="mb-4 flex items-start justify-between" variants={itemVariants}>
+        <motion.div className="px-6 pb-6 pt-6" variants={contentVariants}>
+          <motion.div className="mb-4" variants={itemVariants}>
             <div>
               <h2 className="text-xl font-semibold text-card-foreground">{name}</h2>
               <p className="text-sm text-muted-foreground">{title}</p>
             </div>
-            <div className="flex flex-col items-end gap-1.5">
-              <div className="flex gap-1.5">{tools}</div>
-              <span className="text-xs text-muted-foreground">Tools</span>
-            </div>
           </motion.div>
 
           <motion.div
-            className="my-6 flex items-center justify-around rounded-lg border border-border bg-background/30 p-4"
+            className="my-4 rounded-lg border border-border bg-background/30 p-4 text-sm text-muted-foreground"
             variants={itemVariants}
           >
-            <StatItem icon={Star} value={rating.toFixed(1)} label="rating" />
-            <Divider />
-            <StatItem value={duration} label="duration" />
-            <Divider />
-            <StatItem value={rate} label="rate" />
+            {context}
           </motion.div>
 
           <motion.div variants={itemVariants}>
@@ -146,23 +117,3 @@ export const FreelancerProfileCard = React.forwardRef<
   }
 );
 FreelancerProfileCard.displayName = "FreelancerProfileCard";
-
-const StatItem = ({
-  icon: Icon,
-  value,
-  label
-}: {
-  icon?: React.ElementType;
-  value: string | number;
-  label: string;
-}) => (
-  <div className="flex flex-1 flex-col items-center justify-center px-2 text-center">
-    <div className="flex items-center gap-1">
-      {Icon ? <Icon className="h-4 w-4 text-muted-foreground" /> : null}
-      <span className="text-base font-semibold text-card-foreground">{value}</span>
-    </div>
-    <span className="text-xs capitalize text-muted-foreground">{label}</span>
-  </div>
-);
-
-const Divider = () => <div className="h-10 w-px bg-border" />;

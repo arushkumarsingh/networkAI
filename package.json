@@ -10,12 +10,14 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "next": "14.2.3",
     "@radix-ui/react-avatar": "1.1.1",
     "@radix-ui/react-slot": "1.0.2",
+    "@clerk/nextjs": "5.7.2",
     "class-variance-authority": "0.7.1",
     "framer-motion": "11.2.12",
     "lucide-react": "0.379.0",
+    "next": "14.2.3",
+    "openai": "4.47.3",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-webcam": "7.2.0"
